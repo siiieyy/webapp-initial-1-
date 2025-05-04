@@ -1,1 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Open Beak Detection</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    #status {
+      font-size: 2rem;
+      color: darkred;
+      margin-top: 20px;
+    }
+    img {
+      border: 2px solid #000;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Smart Chicken Coop</h1>
+  <div id="status">Open Beak: 0</div>
+  <img src="{{ url_for('video_feed') }}" width="720" />
 
+  <script>
+    async function updateStatus() {
+      try {
+        const res = await fetch("/status?_=" + new Date().getTime());  // bypass cache
+        const data = await res.json();
+        document.getElementById("status").innerText = "Open Beak: " + data.count;
+      } catch (e) {
+        console.error("Failed to fetch open beak count:", e);
+        document.getElementById("status").innerText = "Open Beak: ?";
+      }
+    }
+
+    setInterval(updateStatus, 500);  // poll every 0.5s
+  </script>
+</body>
+</html>
